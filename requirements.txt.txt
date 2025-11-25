@@ -1,0 +1,16 @@
+streamlit
+streamlit-chat
+pillow
+PyPDF2
+python-docx
+requests
+reportlab
+ultralytics
+sentence-transformers
+faiss-cpu
+SpeechRecognition
+numpy
+torch
+networkx
+pyvis
+scikit-learn
