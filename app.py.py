@@ -21,12 +21,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 # -------------------------------
 # CONFIG (USE ENV VARIABLES)
 # -------------------------------
-GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+GENAI_API_KEY = st.secrets["GENAI_API_KEY"]
 GENAI_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 YOLO_MODEL = "yolov8s.pt"
 
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_ADDRESS = st.secrets["EMAIL_ADDRESS"]
+EMAIL_PASSWORD = st.secrets["EMAIL_PASSWORD"]
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -332,16 +332,26 @@ with tab1:
 
     # Email
     if st.button("Send Last Response via Email ✉️"):
-        if recipient and subject and st.session_state.history:
-            last_response = st.session_state.history[-1]["message"]
-            try:
-                msg = MIMEMultipart(); msg["From"]=EMAIL_ADDRESS; msg["To"]=recipient; msg["Subject"]=subject
-                msg.attach(MIMEText(last_response,"plain"))
-                server = smtplib.SMTP(SMTP_SERVER,SMTP_PORT); server.starttls()
-                server.login(EMAIL_ADDRESS,EMAIL_PASSWORD); server.send_message(msg); server.quit()
-                st.success("Email sent ✅")
-            except Exception as e: st.error(f"Email failed: {e}")
-        else: st.warning("Enter recipient + subject + have chat!")
+     if recipient and subject and st.session_state.history:
+        last_response = st.session_state.history[-1]["message"]
+        try:
+            msg = MIMEMultipart()
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = recipient
+            msg["Subject"] = subject
+            msg.attach(MIMEText(last_response, "plain"))
+
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+            server.quit()
+
+            st.success("Email sent ✅")
+        except Exception as e:
+            st.error(f"Email failed: {e}")
+    else:
+        st.warning("Enter recipient + subject + have chat!")
 
     # Knowledge Graph display
     if st.sidebar.button("Show Knowledge Graph"):
